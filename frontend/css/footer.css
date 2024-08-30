@@ -1,12 +1,15 @@
-footer {
-  width: 380px;
+.main_footer {
+  position: fixed;
+  bottom: 0px;
+  width: 100vw;
+  background: linear-gradient(rgb(37, 37, 37), black);
+}
+
+.footer-block {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: fixed;
-  bottom: 0px;
-  padding: 10px;
-  background: linear-gradient(rgb(37, 37, 37), black);
+  margin: 5px;
 }
 
 .footer-box {
@@ -20,6 +23,12 @@ footer {
   font-size: 13px;
   color: #b1b1b1;
   cursor: pointer;
+}
+
+.footer-box:hover {
+  transform: scale(1.1);
+  -webkit-filter: brightness(0) invert(1);
+  filter: brightness(0) invert(1);
 }
 
 .footer-box img {
@@ -39,12 +48,20 @@ footer {
   align-items: center;
   width: 50px;
   height: 50px;
+  margin: 0px 10px 0px 10px;
   background-color: rgb(129, 129, 129);
   border-radius: 50%;
   color: white;
   font-weight: bold;
   font-size: 25px;
   cursor: pointer;
+}
+
+.footer-M:hover {
+  transform: scale(1.1);
+  box-shadow: rgb(50, 50, 93) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
 .footer-R {

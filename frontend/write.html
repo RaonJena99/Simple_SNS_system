@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Write</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header_status">
+        <div class="header_status-time">
+          <div>12:00</div>
+        </div>
+        <div class="header_status-network">
+          <div>
+            <img src="assets/wifi.svg" alt="" />
+          </div>
+          <div>
+            <img src="assets/battery.svg" alt="" />
+          </div>
+        </div>
+      </div>
+      <div class="header_write">
+        <a href="index.html">
+          <img src="assets/arrow.svg" alt="" />
+        </a>
+        <div class="header_write_name">Write</div>
+      </div>
+    </header>
+    <form id="write-form">
+      <div class="title-form">
+        <input
+          type="text"
+          id="title"
+          name="title"
+          placeholder="title"
+          required
+        />
+      </div>
+
+      <div class="detail-form">
+        <textarea
+          id="detail"
+          name="detail"
+          placeholder="detail"
+          rows="13"
+          required
+        ></textarea>
+      </div>
+      <div class="image-form">
+        <label for="image" class="preview-img">
+          <img src="assets//camera.svg" alt="" />
+        </label>
+        <input type="file" id="image" name="image" required />
+      </div>
+      <div class="public-form">
+        <button type="submit" class="submit">Upload</button>
+        <div>
+          <label for="public">Range</label>
+          <select name="public" id="public">
+            <option value="all" selected>ALL</option>
+            <option value="friend">FRIEND</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <script src="js/write.js"></script>
+  </body>
+</html>

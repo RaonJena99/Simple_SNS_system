@@ -1,0 +1,60 @@
+.header-block {
+  position: fixed;
+  top: 0px;
+  width: 100vw;
+  height: 25px;
+}
+
+.header_status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: rgb(245, 245, 245);
+}
+
+.header_status img {
+  width: 20px;
+}
+
+.header_status-time {
+  font-weight: bold;
+}
+
+.header_status-network {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50px;
+}
+
+.header_status-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px 10px 20px;
+  height: 30px;
+  font-size: 30px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  letter-spacing: 2px;
+  background-color: rgb(245, 245, 245);
+}
+
+.header_status-main-login {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80px;
+}
+
+.header_status-main-name {
+  font-size: 15px;
+}
+
+.header_status-main-img {
+  background-color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  padding: 5px;
+}

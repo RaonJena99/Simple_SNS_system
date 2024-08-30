@@ -1,6 +1,9 @@
 @import "reset.css";
+@import "header.css";
 @import "main.css";
 @import "footer.css";
+@import "write.css";
+@import "detail.css";
 
 body {
   background-color: rgb(245, 245, 245);

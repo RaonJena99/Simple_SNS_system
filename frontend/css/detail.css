@@ -1,0 +1,242 @@
+.header-block {
+  height: 80px;
+  background-color: rgb(245, 245, 245);
+}
+
+.header_detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 50px;
+  width: 95vw;
+  padding: 0px 10px 0px 10px;
+}
+
+.header_detail img {
+  width: 20px;
+}
+
+.header_detail_name {
+  position: fixed;
+  left: 179px;
+  top: 54px;
+}
+
+.header-back {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 1px;
+}
+
+.header-back:hover {
+  background-color: rgb(197, 195, 195);
+  border-radius: 5px;
+}
+
+.header-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 1px;
+}
+
+.header-more:hover {
+  cursor: pointer;
+  background-color: rgb(197, 195, 195);
+  border-radius: 5px;
+}
+
+.detail_main-user {
+  width: 100vw;
+  height: 8vh;
+}
+
+.detail {
+  margin: 80px 0px 0px 0px;
+  z-index: -1;
+}
+
+.detail_main-user {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.detail_main-user-img {
+  width: 40px;
+  height: 40px;
+  margin: 0px 10px 0px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: dotted 2px;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.detail_main-user-img img {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  background-color: gray;
+}
+
+.detail_main-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35vh;
+  margin: 5px 10px 5px 10px;
+  border: 1px solid;
+  border-image: linear-gradient(
+    35deg,
+    rgb(245, 245, 245) 0%,
+    rgb(245, 245, 245) 30%,
+    #949494 50%,
+    rgb(245, 245, 245) 70%,
+    rgb(245, 245, 245) 100%
+  );
+  border-image-slice: 1;
+  padding: 10px 0px 10px 0px;
+  background-color: #f1f1f1;
+}
+
+.detail_main-img img {
+  width: 90vw;
+  height: 35vh;
+  object-fit: cover;
+}
+
+.detail_main-t-l {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px 5px 15px;
+}
+
+.detail_main-title {
+  width: 50vw;
+  display: flex;
+  justify-content: start;
+  align-items: end;
+}
+
+.detail_main-title img {
+  margin-right: 2px;
+}
+
+.detail_main-title div {
+  margin-bottom: 2px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.detail_main-like {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.detail_main-like-img {
+  width: 22px;
+  margin-right: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.detail_main-detail {
+  background-color: rgb(245, 245, 245);
+  padding: 10px 15px 20px 15px;
+  margin: 0px 10px 0px 10px;
+  width: 87vw;
+  border: none;
+  font-size: 14px;
+  outline: none;
+  box-shadow: none;
+  resize: none;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(
+    to right,
+    #b4b4b4 0%,
+    rgb(233, 233, 233) 50%,
+    #b4b4b4 100%
+  );
+  border-image-slice: 1;
+  word-break: break-all;
+}
+
+.footer_detail {
+  margin-top: 10px;
+  width: 100vw;
+}
+
+.comment_box {
+  padding: 0px 45px 0px 10px;
+}
+
+.comment_box-head {
+  display: flex;
+  justify-content: start;
+  align-items: end;
+  margin-bottom: 10px;
+}
+
+.comment_box-cnt {
+  font-size: 17px;
+  margin: 0px 5px 0px 5px;
+}
+
+.comment_box-name {
+  font-size: 14px;
+}
+
+.comment_box-main {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+}
+
+.comment_box-img {
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.comment_box-detail-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  width: 75vw;
+}
+
+.comment_box-detail-name {
+  font-weight: bold;
+}
+
+.comment_box-detail-time {
+  font-size: 12px;
+  color: gray;
+}
+
+.comment_box-detail-bottom {
+  display: inline-block;
+  padding: 10px 5px 10px 5px;
+  background-color: white;
+  border-radius: 0px 10px 10px 10px;
+  font-size: small;
+  word-break: break-all;
+}
+
+.comment_box-detail-bottom-size {
+  width: 300px;
+}
