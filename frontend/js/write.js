@@ -1,5 +1,13 @@
 const form = document.getElementById("write-form");
 const upload = document.getElementById("image");
+const time = document.querySelector(".header_status-time");
+
+function addtime() {
+  const curTime = new Date();
+  const hour = curTime.getHours().toString();
+  const minute = curTime.getMinutes().toString();
+  time.innerText = `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}`;
+}
 
 async function handleSubmitForm(event) {
   event.preventDefault();
@@ -47,5 +55,7 @@ function getImageFiles(event) {
   reader.readAsDataURL(file);
 }
 
+addtime();
+setInterval(addtime, 1000);
 form.addEventListener("submit", handleSubmitForm);
 upload.addEventListener("change", getImageFiles);

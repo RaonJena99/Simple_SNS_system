@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="signup_body">
+    <header>
+      <div class="header-block">
+        <div class="header_status">
+          <div class="header_status-time">11:00</div>
+          <div class="header_status-network">
+            <div>
+              <img src="assets/wifi.svg" alt="" />
+            </div>
+            <div>
+              <img src="assets/battery.svg" alt="" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="signup_box">
+      <div class="signup_name">Mingle</div>
+      <form action="/signup" method="post" id="signup_form">
+        <div class="signup_img_form">
+          <label for="img">
+            <div class="signup_img">
+              <img src="assets/my.svg" alt="" />
+            </div>
+          </label>
+          <input type="file" id="img" name="img" />
+        </div>
+        <div class="signup_id_form">
+          <input
+            type="text"
+            id="id"
+            name="id"
+            placeholder="ID"
+            spellcheck="false"
+            required
+          />
+        </div>
+        <div class="signup_password_form">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            spellcheck="false"
+            required
+          />
+        </div>
+        <div class="signup_name_form">
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Name"
+            spellcheck="false"
+            required
+          />
+        </div>
+        <div class="signup_nick_form">
+          <input
+            type="text"
+            id="nick"
+            name="nick"
+            placeholder="Nickname"
+            spellcheck="false"
+            required
+          />
+        </div>
+        <div class="signup_email_form">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Email"
+            spellcheck="false"
+            required
+          />
+        </div>
+        <div class="signup_submit">
+          <button type="submit" class="submit">Sign up</button>
+        </div>
+      </form>
+      <div class="signtolog">
+        <div>Already have an account?</div>
+        <a href="/login.html">log in</a>
+      </div>
+      <div class="id_chk"></div>
+      <div class="pwd_chk"></div>
+      <div class="pwd_chk2"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+    <script src="js/signup.js"></script>
+  </body>
+</html>

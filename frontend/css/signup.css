@@ -1,0 +1,202 @@
+.signup_box {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  width: 80vw;
+  height: 64vh;
+  border: 2px dotted gray;
+  border-radius: 10px;
+  position: absolute;
+  top: 10%;
+  left: 9.5%;
+}
+
+.signup_name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px 10px 20px;
+  height: 30px;
+  font-size: 30px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  letter-spacing: 2px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.signup_img_form {
+  width: 200px;
+  margin-bottom: 30px;
+}
+
+.signup_img {
+  width: 41px;
+  height: 41px;
+  border: 2px dotted black;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.signup_img img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: gray;
+}
+
+#img {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.signup_id_form {
+  width: 200px;
+  margin-bottom: 30px;
+}
+
+#id {
+  border: none;
+  background: none;
+  outline: none;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(to right, #949494 0%, rgb(245, 245, 245) 100%);
+  border-image-slice: 1;
+  font-size: 16px;
+  width: 200px;
+}
+
+.signup_password_form {
+  width: 200px;
+  margin-bottom: 30px;
+}
+
+#password {
+  border: none;
+  background: none;
+  outline: none;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(to right, #949494 0%, rgb(245, 245, 245) 100%);
+  border-image-slice: 1;
+  font-size: 16px;
+  width: 200px;
+}
+
+.signup_name_form {
+  width: 200px;
+  margin-bottom: 30px;
+}
+
+#name {
+  border: none;
+  background: none;
+  outline: none;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(to right, #949494 0%, rgb(245, 245, 245) 100%);
+  border-image-slice: 1;
+  font-size: 16px;
+  width: 200px;
+}
+
+.signup_nick_form {
+  width: 200px;
+  margin-bottom: 30px;
+}
+
+#nick {
+  border: none;
+  background: none;
+  outline: none;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(to right, #949494 0%, rgb(245, 245, 245) 100%);
+  border-image-slice: 1;
+  font-size: 16px;
+  width: 200px;
+}
+
+.signup_email_form {
+  width: 200px;
+  margin-bottom: 30px;
+}
+
+#email {
+  border: none;
+  background: none;
+  outline: none;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(to right, #949494 0%, rgb(245, 245, 245) 100%);
+  border-image-slice: 1;
+  font-size: 16px;
+  width: 200px;
+}
+
+.signup_submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.submit {
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: 0.3s;
+  font-size: 17px;
+
+  &:hover {
+    letter-spacing: 1px;
+    border-top-style: ridge;
+    border-bottom-style: ridge;
+    transform: scale(1.1);
+    color: var(--btn-bg);
+  }
+}
+
+.signtolog {
+  position: absolute;
+  top: 66vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signtolog div {
+  margin-right: 10px;
+  color: gray;
+  font-size: small;
+}
+
+.signtolog a {
+  font-size: small;
+  text-decoration-line: none;
+}
+
+.id_chk {
+  position: absolute;
+  top: 25vh;
+  left: 15vw;
+  font-size: 11px;
+}
+
+.pwd_chk {
+  position: absolute;
+  top: 32vh;
+  left: 15vw;
+  font-size: 11px;
+}
+
+.pwd_chk2 {
+  position: absolute;
+  top: 34vh;
+  left: 15vw;
+  font-size: 11px;
+}

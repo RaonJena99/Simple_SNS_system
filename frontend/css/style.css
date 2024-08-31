@@ -4,6 +4,8 @@
 @import "footer.css";
 @import "write.css";
 @import "detail.css";
+@import "signup.css";
+@import "login.css";
 
 body {
   background-color: rgb(245, 245, 245);

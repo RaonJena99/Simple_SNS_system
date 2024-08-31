@@ -1,0 +1,99 @@
+.login_box {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  width: 80vw;
+  height: 29vh;
+  border: 2px dotted gray;
+  border-radius: 10px;
+  position: absolute;
+  top: 10%;
+  left: 9.5%;
+}
+
+.login_name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px 10px 20px;
+  height: 30px;
+  font-size: 30px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  letter-spacing: 2px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.login_id_form {
+  width: 200px;
+  margin-bottom: 20px;
+}
+
+#id {
+  border: none;
+  background: none;
+  outline: none;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(to right, #949494 0%, rgb(245, 245, 245) 100%);
+  border-image-slice: 1;
+  font-size: 16px;
+  width: 200px;
+}
+
+.login_password_form {
+  width: 200px;
+  margin-bottom: 20px;
+}
+
+#password {
+  border: none;
+  background: none;
+  outline: none;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(to right, #949494 0%, rgb(245, 245, 245) 100%);
+  border-image-slice: 1;
+  font-size: 16px;
+  width: 200px;
+}
+
+.login_submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.submit {
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: 0.3s;
+  font-size: 17px;
+
+  &:hover {
+    letter-spacing: 1px;
+    border-top-style: ridge;
+    border-bottom-style: ridge;
+    transform: scale(1.1);
+    color: var(--btn-bg);
+  }
+}
+
+.logtosign {
+  position: absolute;
+  top: 31vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logtosign div {
+  margin-right: 10px;
+  color: gray;
+  font-size: small;
+}
+
+.logtosign a {
+  font-size: small;
+  text-decoration-line: none;
+}
