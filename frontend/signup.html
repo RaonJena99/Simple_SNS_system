@@ -31,13 +31,13 @@
               <img src="assets/my.svg" alt="" />
             </div>
           </label>
-          <input type="file" id="img" name="img" />
+          <input type="file" id="img" name="profile_img" required />
         </div>
         <div class="signup_id_form">
           <input
             type="text"
             id="id"
-            name="id"
+            name="user_id"
             placeholder="ID"
             spellcheck="false"
             required
@@ -67,7 +67,7 @@
           <input
             type="text"
             id="nick"
-            name="nick"
+            name="nickname"
             placeholder="Nickname"
             spellcheck="false"
             required
@@ -93,8 +93,8 @@
       </div>
       <div class="id_chk"></div>
       <div class="pwd_chk"></div>
-      <div class="pwd_chk2"></div>
     </div>
+    <div class="complete_signup">Incorrect!</div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
     <script src="js/signup.js"></script>
   </body>

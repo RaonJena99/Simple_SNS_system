@@ -137,3 +137,22 @@ main {
   width: 30px;
   color: rgb(157, 156, 156);
 }
+
+.complete_login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 30px;
+  background-color: rgb(211, 211, 211);
+  border-radius: 0px 0px 5px 5px;
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease-in-out;
+}
+
+.complete_login.show {
+  transform: translateY(36px) translate(-50%, -50%);
+}

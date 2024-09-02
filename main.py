@@ -1,6 +1,8 @@
-from fastapi import FastAPI,UploadFile,Response,Form
+from fastapi import FastAPI,UploadFile,Response,Form,Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
+from fastapi_login import LoginManager
+from fastapi_login.exceptions import InvalidCredentialsException
 from fastapi.encoders import jsonable_encoder
 from typing import Annotated
 import sqlite3
@@ -9,6 +11,78 @@ con = sqlite3.connect('SNS.db',check_same_thread=False)
 cur = con.cursor()
 
 app = FastAPI()
+
+SECRET = "secret-code"
+manager = LoginManager(SECRET,'/login')
+
+#중복 아이디 확인
+@app.get("/id/{user_id}")
+async def get_id(user_id):
+    cur = con.cursor()
+    cur.execute(f"""
+                SELECT user_id from users WHERE user_id = '{user_id}'
+                """)
+    res = cur.fetchone()
+    
+    if res:
+        return True
+    else: return False
+
+# 회원가입하기
+@app.post("/signup")
+async def signup_items(
+                profile_img:UploadFile,
+                user_id:Annotated[str,Form()],
+                password:Annotated[str,Form()],
+                name:Annotated[str,Form()],
+                nickname:Annotated[str,Form()],
+                email:Annotated[str,Form()],
+                 ):
+    image_bytes  = await profile_img.read()
+    cur = con.cursor()
+    cur.execute(f"""
+                INSERT INTO users(user_id,password,name,nickname,profile_img,email)
+                VALUES ('{user_id}','{password}','{name}','{nickname}','{image_bytes.hex()}','{email}')
+                """)
+    con.commit()
+    return '200'
+
+# 로그인하기
+@manager.user_loader()
+def query_user(data):
+    WHERE_STATEMENTS = f'user_id = "{data}"'
+    if isinstance(data,dict):
+        WHERE_STATEMENTS = f'''user_id="{data['id']}"''' 
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    user = cur.execute(f"""
+                        SELECT * FROM users WHERE {WHERE_STATEMENTS}
+                        """).fetchone()
+    return user  
+    
+@app.post("/login")
+def login(
+          id:Annotated[str,Form()],
+          password:Annotated[str,Form()]
+          ):
+    user = query_user(id)
+    if not user:
+        raise InvalidCredentialsException
+    elif password != user["password"]:
+        raise InvalidCredentialsException
+    
+    access_token = manager.create_access_token(data={
+        'sub': {
+            'id':user['user_id'],
+            'name':user['name'],
+            'nickname':user['nickname'],
+            'email':user['email']
+        }
+    })
+    print(access_token)
+    
+    return {'access_token': access_token}
+    
 
 # 게시글 쓰기
 @app.post("/items")
@@ -21,7 +95,8 @@ async def write_item(
                     atime:Annotated[int,Form()],
                     like_cnt:Annotated[int,Form()],
                     comment_cnt:Annotated[int,Form()],
-                    tag_id:Annotated[int,Form()]
+                    tag_id:Annotated[int,Form()],
+                    user=Depends(manager)
                     ):
     image_bytes  =await image.read()
     cur.execute(f"""
@@ -33,7 +108,7 @@ async def write_item(
 
 # 메인 페이지 게시글 가져오기
 @app.get("/items")
-async def get_items():
+async def get_items(user=Depends(manager)):
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     rows = cur.execute(f"""
@@ -64,7 +139,7 @@ async def get_item(item_id:int):
      
 # 각 게시글 좋아요 수 변경하기
 @app.get("/like/{item_id}")
-async def change_like(item_id:int):
+async def change_like(item_id:int,user=Depends(manager)):
     cur = con.cursor()
     cur.execute(f"""
                 UPDATE items SET like_cnt = like_cnt + 1 WHERE id = {item_id}

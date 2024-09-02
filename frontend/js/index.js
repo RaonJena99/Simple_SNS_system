@@ -1,4 +1,5 @@
 const time = document.querySelector(".header_status-time");
+const notification = document.querySelector(".complete_login");
 
 function addtime() {
   const curTime = new Date();
@@ -19,6 +20,23 @@ const calTime = (timestamp) => {
   else if (minute) return `${minute} Minutes ago`;
   else return `${second} Seconds ago`;
 };
+
+const showNotification = () => {
+  notification.classList.add("show");
+  setTimeout(() => {
+    notification.classList.remove("show");
+  }, 2000);
+};
+
+const chklogin = () => {
+  const chk = window.sessionStorage.getItem("login");
+  if (chk) {
+    showNotification();
+    window.sessionStorage.removeItem("login");
+  }
+};
+
+setTimeout(chklogin, 500);
 
 const renderData = (data) => {
   const main = document.querySelector("main");
@@ -156,12 +174,6 @@ const renderData = (data) => {
   });
 };
 
-async function fetchList() {
-  const res = await fetch("/items");
-  const data = await res.json();
-  renderData(data);
-}
-
 function likehandlechange() {
   const like_img = document.querySelector(".main_box-like-img");
   const like_cnt = document.querySelector(".main_box-like-cnt");
@@ -180,6 +192,24 @@ function likehandlechange() {
 function likehandle() {
   const like = document.querySelector(".main_box-like");
   like.addEventListener("click", likehandlechange);
+}
+
+async function fetchList() {
+  const accessToken = window.localStorage.getItem("token");
+  const res = await fetch("/items", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (res.status === 401) {
+    alert("You need to login");
+    window.location.pathname = "login.html";
+    return;
+  }
+
+  const data = await res.json();
+  renderData(data);
 }
 
 fetchList();
