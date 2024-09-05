@@ -5,6 +5,7 @@ from fastapi_login import LoginManager
 from fastapi_login.exceptions import InvalidCredentialsException
 from fastapi.encoders import jsonable_encoder
 from typing import Annotated
+from datetime import timedelta
 import sqlite3
 
 con = sqlite3.connect('SNS.db',check_same_thread=False)
@@ -12,9 +13,44 @@ cur = con.cursor()
 
 app = FastAPI()
 
-SECRET = "secret-code"
-manager = LoginManager(SECRET,'/login')
+SECRET = "secret"
+manager = LoginManager(SECRET,"/login")
 
+# 로그인하기
+@manager.user_loader()
+def query_user(data):
+    WHERE_STATEMENTS = f'''user_id = "{data}"'''
+    if type(data) == dict:
+        WHERE_STATEMENTS = f'''user_id="{data['id']}"''' 
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    user = cur.execute(f"""
+                        SELECT * FROM users WHERE {WHERE_STATEMENTS}
+                        """).fetchone()
+    return user  
+    
+@app.post("/login")
+def login(
+          id:Annotated[str,Form()],
+          password:Annotated[str,Form()]
+          ):
+    user = query_user(id)
+    
+    if not user:
+        raise InvalidCredentialsException
+    elif password != user["password"]:
+        raise InvalidCredentialsException
+    
+    access_token = manager.create_access_token(data={
+        'sub': {
+            'id':user['id'],
+            'nickname':user['nickname'],
+            'email':user['email']
+        }
+    })
+    
+    return {'access_token': access_token}
+   
 #중복 아이디 확인
 @app.get("/id/{user_id}")
 async def get_id(user_id):
@@ -45,44 +81,7 @@ async def signup_items(
                 VALUES ('{user_id}','{password}','{name}','{nickname}','{image_bytes.hex()}','{email}')
                 """)
     con.commit()
-    return '200'
-
-# 로그인하기
-@manager.user_loader()
-def query_user(data):
-    WHERE_STATEMENTS = f'user_id = "{data}"'
-    if isinstance(data,dict):
-        WHERE_STATEMENTS = f'''user_id="{data['id']}"''' 
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    user = cur.execute(f"""
-                        SELECT * FROM users WHERE {WHERE_STATEMENTS}
-                        """).fetchone()
-    return user  
-    
-@app.post("/login")
-def login(
-          id:Annotated[str,Form()],
-          password:Annotated[str,Form()]
-          ):
-    user = query_user(id)
-    if not user:
-        raise InvalidCredentialsException
-    elif password != user["password"]:
-        raise InvalidCredentialsException
-    
-    access_token = manager.create_access_token(data={
-        'sub': {
-            'id':user['user_id'],
-            'name':user['name'],
-            'nickname':user['nickname'],
-            'email':user['email']
-        }
-    })
-    print(access_token)
-    
-    return {'access_token': access_token}
-    
+    return '200' 
 
 # 게시글 쓰기
 @app.post("/items")
@@ -95,8 +94,7 @@ async def write_item(
                     atime:Annotated[int,Form()],
                     like_cnt:Annotated[int,Form()],
                     comment_cnt:Annotated[int,Form()],
-                    tag_id:Annotated[int,Form()],
-                    user=Depends(manager)
+                    tag_id:Annotated[int,Form()]
                     ):
     image_bytes  =await image.read()
     cur.execute(f"""
@@ -108,7 +106,7 @@ async def write_item(
 
 # 메인 페이지 게시글 가져오기
 @app.get("/items")
-async def get_items(user=Depends(manager)):
+async def get_items():
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     rows = cur.execute(f"""
@@ -137,9 +135,9 @@ async def get_item(item_id:int):
                        """).fetchone()
     return rows
      
-# 각 게시글 좋아요 수 변경하기
-@app.get("/like/{item_id}")
-async def change_like(item_id:int,user=Depends(manager)):
+# 게시글 좋아요 수 증가
+@app.get("/likeI/{item_id}")
+async def change_likeI(item_id:int):
     cur = con.cursor()
     cur.execute(f"""
                 UPDATE items SET like_cnt = like_cnt + 1 WHERE id = {item_id}
@@ -147,5 +145,43 @@ async def change_like(item_id:int,user=Depends(manager)):
     con.commit()
     return '200'
 
+# 게시글 좋아요 수 감소
+@app.get("/likeD/{item_id}")
+async def change_likeD(item_id:int):
+    cur = con.cursor()
+    cur.execute(f"""
+                UPDATE items SET like_cnt = like_cnt - 1 WHERE id = {item_id}
+                """)
+    con.commit()
+    return '200'
+
+# 유저 정보 가져오기
+@app.get("/users/{user_id}")
+async def get_user(user_id):  
+    cur = con.cursor()
+    rows = cur.execute(f"""
+                SELECT * from users WHERE id = {user_id}
+                """).fetchone()
+    return rows
+
+# 유저 이미지 가져오기
+@app.get("/user_img/{user_id}")
+async def user_image(user_id:int):
+    cur = con.cursor()
+    image_bytes = cur.execute(f"""
+                              SELECT profile_img FROM users WHERE id = {user_id}
+                              """).fetchone()[0]
     
+    return Response(content=bytes.fromhex(image_bytes), media_type='image/*')
+    
+# 게시글 삭제하기
+@app.delete("/items/{item_id}")
+def del_item(item_id):
+    cur = con.cursor()
+    cur.execute(f"""
+                DELETE FROM items WHERE id = {item_id}
+                """)
+    con.commit()
+    return '200'
+  
 app.mount("/", StaticFiles(directory="frontend",html=True), name="static")

@@ -12,13 +12,25 @@ function addtime() {
 async function handleSubmitForm(event) {
   event.preventDefault();
 
+  const token = window.localStorage.getItem("token");
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+  const user = JSON.parse(jsonPayload).sub;
+
   const body = new FormData(form);
-  body.append("user_id", 0); //<-----게선 필요
+  body.append("user_id", user.id);
   body.append("atime", new Date().getTime());
   body.append("like_cnt", 0);
   body.append("comment_cnt", 0);
   body.append("tag_id", 0); //<------- 개선 필요
-  console.log(body);
 
   try {
     const res = await fetch("/items", {

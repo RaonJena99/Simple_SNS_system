@@ -52,6 +52,27 @@
   border-radius: 5px;
 }
 
+.more_log {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 60px;
+  top: 29px;
+  right: 10px;
+  padding: 5px 10px 5px 10px;
+  border-radius: 3px;
+  background-color: #d8d8d8;
+  opacity: 0;
+  display: none;
+  cursor: pointer;
+}
+
+.more_log.show {
+  opacity: 1;
+  display: flex;
+}
+
 .detail_main-user {
   width: 100vw;
   height: 8vh;
@@ -85,6 +106,20 @@
   height: 37px;
   border-radius: 50%;
   background-color: gray;
+}
+
+.detail_main-user-name {
+  position: absolute;
+  top: 93px;
+  left: 60px;
+}
+
+.detail_main_user-date {
+  position: absolute;
+  top: 110px;
+  left: 60px;
+  font-size: 13px;
+  color: gray;
 }
 
 .detail_main-img {

@@ -98,6 +98,7 @@
   align-items: center;
   border: 2px dashed gray;
   border-radius: 7px;
+  cursor: pointer;
 }
 
 .image-form img {

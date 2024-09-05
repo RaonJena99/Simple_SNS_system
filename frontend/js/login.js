@@ -27,13 +27,11 @@ async function handleLoginForm(event) {
     method: "POST",
     body,
   });
-  const data = await res.json();
-  const accessToken = data.access_token;
-
-  window.localStorage.setItem("token", accessToken);
-  console.log(accessToken);
 
   if (res.status === 200) {
+    const data = await res.json();
+    const accessToken = data.access_token;
+    window.localStorage.setItem("token", accessToken);
     window.sessionStorage.setItem("login", true);
     window.location.pathname = "/";
   } else if (res.status === 401) {

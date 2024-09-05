@@ -1,5 +1,7 @@
 const time = document.querySelector(".header_status-time");
 const notification = document.querySelector(".complete_login");
+const name = document.querySelector(".header_status-main-name");
+const user_img = document.querySelector(".main_img");
 
 function addtime() {
   const curTime = new Date();
@@ -9,16 +11,27 @@ function addtime() {
 }
 
 const calTime = (timestamp) => {
-  const curTime = new Date().getTime() - 9 * 60 * 60 * 1000;
-  const time = new Date(curTime - timestamp);
-  const day = time.getDay();
-  const hour = time.getHours();
-  const minute = time.getMinutes();
-  const second = time.getSeconds();
-  if (day) return `${day} Days ago`;
-  else if (hour) return `${hour} Hours ago`;
-  else if (minute) return `${minute} Minutes ago`;
-  else return `${second} Seconds ago`;
+  const TIME_ZONE = 3240 * 10000 - 9 * 60 * 60 * 1000;
+  const start = new Date(timestamp);
+  const end = new Date(new Date().getTime() + TIME_ZONE);
+  const diff = (end - start) / 1000;
+
+  const times = [
+    { name: "Years", milliSeconds: 60 * 60 * 24 * 365 },
+    { name: "Months", milliSeconds: 60 * 60 * 24 * 30 },
+    { name: "Days", milliSeconds: 60 * 60 * 24 },
+    { name: "Hours", milliSeconds: 60 * 60 },
+    { name: "Minutes", milliSeconds: 60 },
+  ];
+
+  for (const value of times) {
+    const betweenTime = Math.floor(diff / value.milliSeconds);
+
+    if (betweenTime > 0) {
+      return `${betweenTime} ${value.name} ago`;
+    }
+  }
+  return "Just now";
 };
 
 const showNotification = () => {
@@ -41,6 +54,9 @@ setTimeout(chklogin, 500);
 const renderData = (data) => {
   const main = document.querySelector("main");
   data.reverse().forEach(async (obj) => {
+    const resu = await fetch(`/users/${obj.user_id}`);
+    const data = await resu.json();
+
     const main_box_move1 = document.createElement("a");
     main_box_move1.className = main_box_move1;
     main_box_move1.style.textDecoration = "none";
@@ -66,11 +82,16 @@ const renderData = (data) => {
     main_box_user_img.className = "main_box-user-img";
 
     const user_img = document.createElement("img");
-    user_img.src = "assets/my.svg"; // <--------------- 개선 필요
+
+    const resi = await fetch(`/user_img/${data.id}`);
+    const blobi = await resi.blob();
+    const urli = URL.createObjectURL(blobi);
+    user_img.src = urli;
+    URL.revokeObjectURL(urli);
 
     const main_box_user_name = document.createElement("div");
     main_box_user_name.className = "main_box-user-name";
-    main_box_user_name.innerText = "Name"; //<--------- 개선 필요
+    main_box_user_name.innerText = data.nickname;
 
     const main_box_img = document.createElement("div");
     main_box_img.className = "main_box-img";
@@ -194,8 +215,39 @@ function likehandle() {
   like.addEventListener("click", likehandlechange);
 }
 
+const mainUser = async (data) => {
+  name.innerText = data.nickname;
+  const res = await fetch(`/user_img/${data.id}`);
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  user_img.src = url;
+  URL.revokeObjectURL(url);
+};
+
+const decodeJWT = async () => {
+  const token = window.localStorage.getItem("token");
+
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  const user = JSON.parse(jsonPayload).sub;
+  const res = await fetch(`/users/${user.id}`);
+  const data = await res.json();
+
+  mainUser(data);
+};
+
 async function fetchList() {
   const accessToken = window.localStorage.getItem("token");
+
   const res = await fetch("/items", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -204,6 +256,7 @@ async function fetchList() {
 
   if (res.status === 401) {
     alert("You need to login");
+    window.localStorage.removeItem("token");
     window.location.pathname = "login.html";
     return;
   }
@@ -215,4 +268,5 @@ async function fetchList() {
 fetchList();
 addtime();
 setInterval(addtime, 1000);
-setTimeout(likehandle, 100);
+setTimeout(likehandle, 200);
+decodeJWT();

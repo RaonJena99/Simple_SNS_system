@@ -1,4 +1,6 @@
 const time = document.querySelector(".header_status-time");
+const more = document.querySelector(".header-more");
+const del = document.querySelector(".more_log");
 
 function addtime() {
   const curTime = new Date();
@@ -8,6 +10,10 @@ function addtime() {
 }
 
 const renderData = async (data) => {
+  const resu = await fetch(`/users/${data.user_id}`);
+  const datau = await resu.json(); // <---- 개선
+  console.log(new Date());
+
   const main = document.querySelector(".detail");
 
   const detail_main = document.createElement("div");
@@ -20,11 +26,27 @@ const renderData = async (data) => {
   detail_main_user_img.className = "detail_main-user-img";
 
   const user_img = document.createElement("img");
-  user_img.src = "assets/my.svg"; //<------- 개선 필요
+
+  const resi = await fetch(`/user_img/${datau.id}`);
+  const blobi = await resi.blob();
+  const urli = URL.createObjectURL(blobi);
+  user_img.src = urli;
+  URL.revokeObjectURL(urli);
 
   const detail_main_user_name = document.createElement("div");
   detail_main_user_name.className = "detail_main-user-name";
-  detail_main_user_name.innerText = "Name"; //<------- 개선 필요
+  detail_main_user_name.innerText = datau.nickname;
+
+  const detail_main_user_date = document.createElement("div");
+  detail_main_user_date.className = "detail_main_user-date";
+  const date = new Date(data.atime);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  detail_main_user_date.innerText = `${year}.${month
+    .toString()
+    .padStart(2, "0")}.${day.toString().padStart(2, "0")}`;
+  console.log(new Date(data.atime).getDate());
 
   const detail_main_img = document.createElement("div");
   detail_main_img.className = "detail_main-img";
@@ -69,6 +91,7 @@ const renderData = async (data) => {
 
   detail_main_user.appendChild(detail_main_user_img);
   detail_main_user.appendChild(detail_main_user_name);
+  detail_main_user.appendChild(detail_main_user_date);
 
   detail_main_img.appendChild(detail_img);
 
@@ -100,6 +123,28 @@ async function fetchList() {
   renderData(data);
 }
 
+const handlemore = () => {
+  const log = document.querySelector(".more_log");
+  if (log.className === "more_log") log.classList.add("show");
+  else log.classList.remove("show");
+};
+
+const handleDelete = async () => {
+  if (confirm("Are you sure you want to delete?")) {
+    let qs = window.document.URL.toString();
+    let id = qs.split("?");
+    const res = await fetch(`/items/${id[1]}`, {
+      method: "DELETE",
+    });
+    if (res.status === 200) {
+      window.location.pathname = "/";
+    }
+  }
+};
+
 fetchList();
 addtime();
 setInterval(addtime, 1000);
+
+more.addEventListener("click", handlemore);
+del.addEventListener("click", handleDelete);
