@@ -41,19 +41,17 @@
           <div class="comment_box-cnt">0</div>
           <div class="comment_box-name">Comments</div>
         </div>
-        <div class="comment_box-main">
-          <div class="comment_box-img">
-            <img src="assets/my.svg" alt="" />
-          </div>
-          <div class="comment_box-detail">
-            <div class="comment_box-detail-top">
-              <div class="comment_box-detail-name">Name</div>
-              <div class="comment_box-detail-time">08.24 12:23</div>
-            </div>
-            <div class="comment_box-detail-bottom-size">
-              <div class="comment_box-detail-bottom">너무 좋네요!!</div>
-            </div>
-          </div>
+        <div class="comment_typing">
+          <form id="comment_form">
+            <img src="assets/my.svg" alt="" id="com_img" />
+            <textarea
+              name="comment"
+              id="comment"
+              spellcheck="false"
+              required
+            ></textarea>
+            <button type="submit">submit</button>
+          </form>
         </div>
       </div>
     </footer>

@@ -53,7 +53,7 @@ def login(
    
 #중복 아이디 확인
 @app.get("/id/{user_id}")
-async def get_id(user_id):
+def get_id(user_id):
     cur = con.cursor()
     cur.execute(f"""
                 SELECT user_id from users WHERE user_id = '{user_id}'
@@ -106,7 +106,7 @@ async def write_item(
 
 # 메인 페이지 게시글 가져오기
 @app.get("/items")
-async def get_items():
+def get_items():
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     rows = cur.execute(f"""
@@ -117,7 +117,7 @@ async def get_items():
 
 # 메인 페이지 게시글 이미지 가져오기
 @app.get("/images/{item_id}")
-async def get_image(item_id:int):
+def get_image(item_id:int):
     cur = con.cursor()
     image_bytes = cur.execute(f"""
                               SELECT image FROM items WHERE id = {item_id}
@@ -127,7 +127,7 @@ async def get_image(item_id:int):
 
 # 각 게시글 데이터 가져오기
 @app.get("/items/{item_id}")
-async def get_item(item_id:int):
+def get_item(item_id:int):
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     rows = cur.execute(f"""
@@ -137,7 +137,7 @@ async def get_item(item_id:int):
      
 # 게시글 좋아요 수 증가
 @app.get("/likeI/{item_id}")
-async def change_likeI(item_id:int):
+def change_likeI(item_id:int):
     cur = con.cursor()
     cur.execute(f"""
                 UPDATE items SET like_cnt = like_cnt + 1 WHERE id = {item_id}
@@ -147,7 +147,7 @@ async def change_likeI(item_id:int):
 
 # 게시글 좋아요 수 감소
 @app.get("/likeD/{item_id}")
-async def change_likeD(item_id:int):
+def change_likeD(item_id:int):
     cur = con.cursor()
     cur.execute(f"""
                 UPDATE items SET like_cnt = like_cnt - 1 WHERE id = {item_id}
@@ -157,7 +157,7 @@ async def change_likeD(item_id:int):
 
 # 유저 정보 가져오기
 @app.get("/users/{user_id}")
-async def get_user(user_id):  
+def get_user(user_id):  
     cur = con.cursor()
     rows = cur.execute(f"""
                 SELECT * from users WHERE id = {user_id}
@@ -166,7 +166,7 @@ async def get_user(user_id):
 
 # 유저 이미지 가져오기
 @app.get("/user_img/{user_id}")
-async def user_image(user_id:int):
+def user_image(user_id:int):
     cur = con.cursor()
     image_bytes = cur.execute(f"""
                               SELECT profile_img FROM users WHERE id = {user_id}
@@ -183,5 +183,39 @@ def del_item(item_id):
                 """)
     con.commit()
     return '200'
+
+#댓글 쓰기
+@app.post("/coms")
+def write_com(
+            item_id:Annotated[int,Form()],
+            user_id:Annotated[int,Form()],
+            user_nick:Annotated[str,Form()],
+            comment:Annotated[str,Form()],
+            atime:Annotated[int,Form()],
+            ):
+    cur = con.cursor()
+    cur.execute(f"""
+                INSERT INTO comment (item_id,user_id,user_nick,com,atime)
+                VALUES ('{item_id}','{user_id}','{user_nick}','{comment}','{atime}')
+                """)
+    con.commit()
+    return '200'
+
+#댓글 가져오기 & 댓글 개수 업데이트
+@app.get("/coms/{item_id}")
+def get_com(item_id:int):
+    cur = con.cursor()
+    cur.execute(f"""
+                UPDATE items SET comment_cnt = (SELECT COUNT(*) from comment WHERE item_id = {item_id}) WHERE id = {item_id}
+                """)
+    con.commit()
+    
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    rows = cur.execute(f"""
+                       SELECT * from comment WHERE item_id = {item_id}
+                       """).fetchall()
+     
+    return JSONResponse(jsonable_encoder(dict(row) for row in rows))
   
 app.mount("/", StaticFiles(directory="frontend",html=True), name="static")

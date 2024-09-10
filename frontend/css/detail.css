@@ -73,6 +73,10 @@
   display: flex;
 }
 
+.more_log:hover {
+  background-color: #c1c1c1;
+}
+
 .detail_main-user {
   width: 100vw;
   height: 8vh;
@@ -236,6 +240,7 @@
   display: flex;
   justify-content: start;
   align-items: start;
+  margin-bottom: 10px;
 }
 
 .comment_box-img {
@@ -244,6 +249,11 @@
   margin-right: 10px;
   border-radius: 50%;
   background-color: white;
+}
+.comment_box-img img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
 }
 
 .comment_box-detail-top {
@@ -274,4 +284,42 @@
 
 .comment_box-detail-bottom-size {
   width: 300px;
+}
+
+.comment_typing {
+  margin-bottom: 10px;
+}
+
+.comment_typing img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: white;
+  margin-right: 10px;
+}
+
+#comment_form {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+}
+
+#comment_form button {
+  height: 42px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: double;
+  background: none;
+}
+
+#comment {
+  resize: none;
+  border-radius: 5px;
+  margin-right: 5px;
+  width: 80vw;
+  height: 5vh;
+  font-size: small;
+  padding: 2px;
+  outline: none;
+  border: 1px dashed;
 }

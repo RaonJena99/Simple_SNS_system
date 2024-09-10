@@ -129,13 +129,13 @@ const renderData = (data) => {
     main_box_like.className = "main_box-like";
 
     const main_box_like_img = document.createElement("div");
-    main_box_like_img.className = "main_box-like-img";
+    main_box_like_img.className = `main_box-like-img ${obj.id}`;
 
     const like_img = document.createElement("img");
     like_img.src = "assets/love_1.svg";
 
     const main_box_like_cnt = document.createElement("div");
-    main_box_like_cnt.className = "main_box-like-cnt";
+    main_box_like_cnt.className = `main_box-like-cnt${obj.id}`;
     main_box_like_cnt.innerText = obj.like_cnt;
 
     const main_box_comment = document.createElement("div");
@@ -195,15 +195,16 @@ const renderData = (data) => {
   });
 };
 
-function likehandlechange() {
-  const like_img = document.querySelector(".main_box-like-img");
-  const like_cnt = document.querySelector(".main_box-like-cnt");
+async function likehandlechange(like, l) {
+  const item_id = l.className.split(" ")[1];
+  const like_cnt = document.querySelector(`.main_box-like-cnt${item_id}`);
   let cnt = parseInt(like_cnt.innerText);
-  if (like_img.innerHTML === '<img src="assets/love_1.svg">') {
-    like_img.innerHTML = '<img src="assets/love_2.svg">';
+
+  if (l.innerHTML === '<img src="assets/love_1.svg">') {
+    l.innerHTML = '<img src="assets/love_2.svg">';
     cnt++;
   } else {
-    like_img.innerHTML = '<img src="assets/love_1.svg">';
+    l.innerHTML = '<img src="assets/love_1.svg">';
     cnt--;
   }
 
@@ -211,8 +212,10 @@ function likehandlechange() {
 }
 
 function likehandle() {
-  const like = document.querySelector(".main_box-like");
-  like.addEventListener("click", likehandlechange);
+  var likes = document.querySelectorAll(".main_box-like-img");
+  [].forEach.call(likes, function (like) {
+    like.addEventListener("click", (likex) => likehandlechange(likex, like));
+  });
 }
 
 const mainUser = async (data) => {
