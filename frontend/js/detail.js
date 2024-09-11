@@ -4,6 +4,19 @@ const del = document.querySelector(".more_log");
 const com_img = document.getElementById("com_img");
 const comment = document.getElementById("comment_form");
 
+const token = window.localStorage.getItem("token");
+var base64Url = token.split(".")[1];
+var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+var jsonPayload = decodeURIComponent(
+  atob(base64)
+    .split("")
+    .map(function (c) {
+      return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+    })
+    .join("")
+);
+const user = JSON.parse(jsonPayload).sub;
+
 function addtime() {
   const curTime = new Date();
   const hour = curTime.getHours().toString();
@@ -145,7 +158,10 @@ const renderData = async (data) => {
   detail_main_like_img.className = "detail_main-like-img";
 
   const like_img = document.createElement("img");
-  like_img.src = "assets/love_1.svg";
+  const resl = await fetch(`/likes/${data.id}/${data.user_id}`);
+  const datal = await resl.json();
+  if (datal) like_img.src = "assets/love_2.svg";
+  else like_img.src = "assets/love_1.svg";
 
   const detail_main_like_cnt = document.createElement("div");
   detail_main_like_cnt.className = "detail_main-like-cnt";
@@ -219,24 +235,10 @@ const handleDelete = async () => {
 const handleComment = async (event) => {
   event.preventDefault();
 
-  const token = window.localStorage.getItem("token");
-
-  var base64Url = token.split(".")[1];
-  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  var jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
-  );
-  const user = JSON.parse(jsonPayload).sub;
   const qs = window.document.URL.toString();
   const id = qs.split("?");
 
   const body = new FormData(comment);
-  console.log(body);
 
   body.append("item_id", id[1]);
   body.append("user_id", user.id);
@@ -255,9 +257,36 @@ const handleComment = async (event) => {
   }
 };
 
+async function likehandlechange(like, l) {
+  let qs = window.document.URL.toString();
+  let id = qs.split("?");
+
+  const like_cnt = document.querySelector(`.detail_main-like-cnt`);
+  let cnt = parseInt(like_cnt.innerText);
+
+  if (l.innerHTML === '<img src="assets/love_1.svg">') {
+    l.innerHTML = '<img src="assets/love_2.svg">';
+    await fetch(`/likeI/${id[1]}/${user.id}`);
+    cnt++;
+  } else {
+    l.innerHTML = '<img src="assets/love_1.svg">';
+    await fetch(`/likeD/${id[1]}/${user.id}`);
+    cnt--;
+  }
+  like_cnt.innerText = cnt;
+}
+
+function likehandle() {
+  var likes = document.querySelectorAll(".detail_main-like-img");
+  [].forEach.call(likes, function (like) {
+    like.addEventListener("click", (likex) => likehandlechange(likex, like));
+  });
+}
+
 fetchList();
 addtime();
 setInterval(addtime, 1000);
+setTimeout(likehandle, 500);
 
 more.addEventListener("click", handlemore);
 del.addEventListener("click", handleDelete);
