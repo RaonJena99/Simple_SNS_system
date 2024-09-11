@@ -3,6 +3,19 @@ const notification = document.querySelector(".complete_login");
 const name = document.querySelector(".header_status-main-name");
 const user_img = document.querySelector(".main_img");
 
+const token = window.localStorage.getItem("token");
+var base64Url = token.split(".")[1];
+var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+var jsonPayload = decodeURIComponent(
+  atob(base64)
+    .split("")
+    .map(function (c) {
+      return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+    })
+    .join("")
+);
+const user = JSON.parse(jsonPayload).sub;
+
 function addtime() {
   const curTime = new Date();
   const hour = curTime.getHours().toString();
@@ -51,9 +64,11 @@ const chklogin = () => {
 
 setTimeout(chklogin, 500);
 
-const renderData = (data) => {
+const renderData = async (data) => {
   const main = document.querySelector("main");
-  data.reverse().forEach(async (obj) => {
+  const sortdata = data.sort((a, b) => a.atime - b.atime);
+
+  for (const obj of sortdata) {
     const resu = await fetch(`/users/${obj.user_id}`);
     const data = await resu.json();
 
@@ -132,7 +147,10 @@ const renderData = (data) => {
     main_box_like_img.className = `main_box-like-img ${obj.id}`;
 
     const like_img = document.createElement("img");
-    like_img.src = "assets/love_1.svg";
+    const resl = await fetch(`/likes/${obj.id}/${data.id}`);
+    const datal = await resl.json();
+    if (datal) like_img.src = "assets/love_2.svg";
+    else like_img.src = "assets/love_1.svg";
 
     const main_box_like_cnt = document.createElement("div");
     main_box_like_cnt.className = `main_box-like-cnt${obj.id}`;
@@ -192,7 +210,7 @@ const renderData = (data) => {
     main_box.appendChild(main_box_R);
 
     main.appendChild(main_box);
-  });
+  }
 };
 
 async function likehandlechange(like, l) {
@@ -202,12 +220,13 @@ async function likehandlechange(like, l) {
 
   if (l.innerHTML === '<img src="assets/love_1.svg">') {
     l.innerHTML = '<img src="assets/love_2.svg">';
+    await fetch(`/likeI/${item_id}/${user.id}`);
     cnt++;
   } else {
     l.innerHTML = '<img src="assets/love_1.svg">';
+    await fetch(`/likeD/${item_id}/${user.id}`);
     cnt--;
   }
-
   like_cnt.innerText = cnt;
 }
 
@@ -228,20 +247,6 @@ const mainUser = async (data) => {
 };
 
 const decodeJWT = async () => {
-  const token = window.localStorage.getItem("token");
-
-  var base64Url = token.split(".")[1];
-  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  var jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
-  );
-
-  const user = JSON.parse(jsonPayload).sub;
   const res = await fetch(`/users/${user.id}`);
   const data = await res.json();
 
@@ -271,5 +276,5 @@ async function fetchList() {
 fetchList();
 addtime();
 setInterval(addtime, 1000);
-setTimeout(likehandle, 200);
+setTimeout(likehandle, 500);
 decodeJWT();

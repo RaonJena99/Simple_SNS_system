@@ -136,24 +136,46 @@ def get_item(item_id:int):
     return rows
      
 # 게시글 좋아요 수 증가
-@app.get("/likeI/{item_id}")
-def change_likeI(item_id:int):
+@app.get("/likeI/{item_id}/{user_id}")
+def change_likeI(item_id:int,user_id:int):
     cur = con.cursor()
+
     cur.execute(f"""
                 UPDATE items SET like_cnt = like_cnt + 1 WHERE id = {item_id}
                 """)
+    
+    cur.execute(f"""
+                INSERT INTO likes (item_id,user_id)
+                VALUES ('{item_id}','{user_id}')
+                """)
+    
     con.commit()
     return '200'
 
 # 게시글 좋아요 수 감소
-@app.get("/likeD/{item_id}")
-def change_likeD(item_id:int):
+@app.get("/likeD/{item_id}/{user_id}")
+def change_likeD(item_id:int,user_id:int):
     cur = con.cursor()
     cur.execute(f"""
                 UPDATE items SET like_cnt = like_cnt - 1 WHERE id = {item_id}
                 """)
+
+    cur.execute(f"""
+                DELETE from likes WHERE item_id = {item_id} AND user_id = {user_id}
+                """)
+    
     con.commit()
     return '200'
+
+# 게시글 좋아요 선택 확인
+@app.get("/likes/{item_id}/{user_id}")
+def check_like(item_id:int,user_id:int):
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    rows = cur.execute(f"""
+                       SELECT * from likes WHERE item_id = {item_id} AND user_id = {user_id}
+                       """).fetchone()
+    return rows
 
 # 유저 정보 가져오기
 @app.get("/users/{user_id}")
@@ -217,5 +239,6 @@ def get_com(item_id:int):
                        """).fetchall()
      
     return JSONResponse(jsonable_encoder(dict(row) for row in rows))
-  
+
+
 app.mount("/", StaticFiles(directory="frontend",html=True), name="static")

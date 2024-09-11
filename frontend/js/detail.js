@@ -17,7 +17,7 @@ const renderComment = async (data) => {
   comment_cnt.innerText = data.length;
 
   const sortdata = data.sort((a, b) => a.atime - b.atime);
-  sortdata.forEach(async (obj) => {
+  for (const obj of sortdata) {
     const comment_box_main = document.createElement("div");
     comment_box_main.className = "comment_box-main";
 
@@ -28,7 +28,7 @@ const renderComment = async (data) => {
 
     const comresi = await fetch(`/user_img/${obj.user_id}`);
     const comblobi = await comresi.blob();
-    const comurli = URL.createObjectURL(comblobi);
+    const comurli = await URL.createObjectURL(comblobi);
     comment_img.src = comurli;
     URL.revokeObjectURL(comurli);
 
@@ -76,7 +76,7 @@ const renderComment = async (data) => {
     comment_box_main.appendChild(comment_box_detail);
 
     comment_box.appendChild(comment_box_main);
-  });
+  }
 };
 
 const renderData = async (data) => {
