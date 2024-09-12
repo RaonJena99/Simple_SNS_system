@@ -4,8 +4,17 @@ const del = document.querySelector(".more_log");
 const com_img = document.getElementById("com_img");
 const comment = document.getElementById("comment_form");
 
-const token = window.localStorage.getItem("token");
-var base64Url = token.split(".")[1];
+const token = document.cookie;
+var cookieData = document.cookie;
+var start = cookieData.indexOf("access_token=");
+var cValue = "";
+if (start != -1) {
+  start += "access_token=".length;
+  var end = cookieData.indexOf(";", start);
+  if (end == -1) end = cookieData.length;
+  cValue = cookieData.substring(start, end);
+}
+var base64Url = cValue.split(".")[1];
 var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
 var jsonPayload = decodeURIComponent(
   atob(base64)
@@ -15,7 +24,7 @@ var jsonPayload = decodeURIComponent(
     })
     .join("")
 );
-const user = JSON.parse(jsonPayload).sub;
+const user = JSON.parse(jsonPayload);
 
 function addtime() {
   const curTime = new Date();
@@ -112,8 +121,13 @@ const renderData = async (data) => {
   const blobi = await resi.blob();
   const urli = URL.createObjectURL(blobi);
   user_img.src = urli;
-  com_img.src = urli;
   URL.revokeObjectURL(urli);
+
+  const resc = await fetch(`/user_img/${user.id}`);
+  const blobc = await resc.blob();
+  const urlc = URL.createObjectURL(blobc);
+  com_img.src = urlc;
+  URL.revokeObjectURL(urlc);
 
   const detail_main_user_name = document.createElement("div");
   detail_main_user_name.className = "detail_main-user-name";
@@ -158,7 +172,7 @@ const renderData = async (data) => {
   detail_main_like_img.className = "detail_main-like-img";
 
   const like_img = document.createElement("img");
-  const resl = await fetch(`/likes/${data.id}/${data.user_id}`);
+  const resl = await fetch(`/likes/${data.id}/${user.id}`);
   const datal = await resl.json();
   if (datal) like_img.src = "assets/love_2.svg";
   else like_img.src = "assets/love_1.svg";

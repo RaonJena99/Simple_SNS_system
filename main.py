@@ -1,56 +1,73 @@
-from fastapi import FastAPI,UploadFile,Response,Form,Depends
+from fastapi import FastAPI,UploadFile,Response,Request, HTTPException,status,Form,Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi_login import LoginManager
 from fastapi_login.exceptions import InvalidCredentialsException
 from fastapi.encoders import jsonable_encoder
 from typing import Annotated
-from datetime import timedelta
-import sqlite3
+import sqlite3, jwt
 
 con = sqlite3.connect('SNS.db',check_same_thread=False)
 cur = con.cursor()
 
 app = FastAPI()
 
-SECRET = "secret"
-manager = LoginManager(SECRET,"/login")
+SECRET = "super-secret-key"
 
-# 로그인하기
-@manager.user_loader()
-def query_user(data):
-    WHERE_STATEMENTS = f'''user_id = "{data}"'''
-    if type(data) == dict:
-        WHERE_STATEMENTS = f'''user_id="{data['id']}"''' 
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    user = cur.execute(f"""
-                        SELECT * FROM users WHERE {WHERE_STATEMENTS}
-                        """).fetchone()
-    return user  
-    
 @app.post("/login")
 def login(
           id:Annotated[str,Form()],
-          password:Annotated[str,Form()]
+          password:Annotated[str,Form()],
+          response: Response
           ):
-    user = query_user(id)
-    
+    # 유저 정보 확인
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    user = cur.execute(f"""
+                        SELECT * FROM users WHERE user_id = "{id}"
+                        """).fetchone()
     if not user:
         raise InvalidCredentialsException
     elif password != user["password"]:
         raise InvalidCredentialsException
     
-    access_token = manager.create_access_token(data={
-        'sub': {
-            'id':user['id'],
-            'nickname':user['nickname'],
-            'email':user['email']
-        }
-    })
+    # 쿠키에 JWT 토큰 생성
+    token = jwt.encode({"id": user['id'],"nickname":user['nickname'],"email":user['email']},SECRET,algorithm="HS256")
+    response.set_cookie(key="access_token",value=token)
     
-    return {'access_token': access_token}
-   
+    return {"message": "로그인 성공", "token": token}
+
+async def get_token(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Token not found."
+        )
+    return token
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET, algorithms=["HS256"])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Token has expired."
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid token."
+        )
+    
+    user_id: str = payload.get("id")
+    if user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No valid user information in the token."
+        )
+    return user_id
+    
 #중복 아이디 확인
 @app.get("/id/{user_id}")
 def get_id(user_id):
@@ -106,7 +123,8 @@ async def write_item(
 
 # 메인 페이지 게시글 가져오기
 @app.get("/items")
-def get_items():
+def get_items(token: str = Depends(get_token)):
+    user_id = verify_token(token) 
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     rows = cur.execute(f"""

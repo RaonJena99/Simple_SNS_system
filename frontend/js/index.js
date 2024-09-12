@@ -1,20 +1,7 @@
 const time = document.querySelector(".header_status-time");
 const notification = document.querySelector(".complete_login");
-const name = document.querySelector(".header_status-main-name");
 const user_img = document.querySelector(".main_img");
-
-const token = window.localStorage.getItem("token");
-var base64Url = token.split(".")[1];
-var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-var jsonPayload = decodeURIComponent(
-  atob(base64)
-    .split("")
-    .map(function (c) {
-      return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-    })
-    .join("")
-);
-const user = JSON.parse(jsonPayload).sub;
+let user = null;
 
 function addtime() {
   const curTime = new Date();
@@ -65,6 +52,28 @@ const chklogin = () => {
 setTimeout(chklogin, 500);
 
 const renderData = async (data) => {
+  const token = document.cookie;
+  var cookieData = document.cookie;
+  var start = cookieData.indexOf("access_token=");
+  var cValue = "";
+  if (start != -1) {
+    start += "access_token=".length;
+    var end = cookieData.indexOf(";", start);
+    if (end == -1) end = cookieData.length;
+    cValue = cookieData.substring(start, end);
+  }
+  var base64Url = cValue.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+  user = JSON.parse(jsonPayload);
+
   const main = document.querySelector("main");
   const sortdata = data.sort((a, b) => a.atime - b.atime);
 
@@ -147,7 +156,7 @@ const renderData = async (data) => {
     main_box_like_img.className = `main_box-like-img ${obj.id}`;
 
     const like_img = document.createElement("img");
-    const resl = await fetch(`/likes/${obj.id}/${data.id}`);
+    const resl = await fetch(`/likes/${obj.id}/${user.id}`);
     const datal = await resl.json();
     if (datal) like_img.src = "assets/love_2.svg";
     else like_img.src = "assets/love_1.svg";
@@ -237,32 +246,22 @@ function likehandle() {
   });
 }
 
-const mainUser = async (data) => {
-  name.innerText = data.nickname;
-  const res = await fetch(`/user_img/${data.id}`);
+const Headeruser = async () => {
+  const name = document.querySelector(".header_status-main-name");
+  const img = document.querySelector(".main_img");
+  name.innerText = user.nickname;
+  const res = await fetch(`/user_img/${user.id}`);
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
-  user_img.src = url;
+  img.src = url;
   URL.revokeObjectURL(url);
 };
 
-const decodeJWT = async () => {
-  const res = await fetch(`/users/${user.id}`);
-  const data = await res.json();
-
-  mainUser(data);
-};
-
 async function fetchList() {
-  const accessToken = window.localStorage.getItem("token");
+  const res = await fetch("/items");
+  console.log(res);
 
-  const res = await fetch("/items", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (res.status === 401) {
+  if (res.status === 403) {
     alert("You need to login");
     window.localStorage.removeItem("token");
     window.location.pathname = "login.html";
@@ -277,4 +276,4 @@ fetchList();
 addtime();
 setInterval(addtime, 1000);
 setTimeout(likehandle, 500);
-decodeJWT();
+setTimeout(Headeruser, 500);
