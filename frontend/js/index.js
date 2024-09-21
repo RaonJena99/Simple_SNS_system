@@ -34,24 +34,7 @@ const calTime = (timestamp) => {
   return "Just now";
 };
 
-const showNotification = () => {
-  notification.classList.add("show");
-  setTimeout(() => {
-    notification.classList.remove("show");
-  }, 2000);
-};
-
-const chklogin = () => {
-  const chk = window.sessionStorage.getItem("login");
-  if (chk) {
-    showNotification();
-    window.sessionStorage.removeItem("login");
-  }
-};
-
-setTimeout(chklogin, 500);
-
-const renderData = async (data) => {
+const Access_token = () => {
   const token = document.cookie;
   var cookieData = document.cookie;
   var start = cookieData.indexOf("access_token=");
@@ -73,6 +56,25 @@ const renderData = async (data) => {
       .join("")
   );
   user = JSON.parse(jsonPayload);
+};
+
+const showNotification = () => {
+  notification.classList.add("show");
+  setTimeout(() => {
+    notification.classList.remove("show");
+  }, 2000);
+};
+
+const chklogin = () => {
+  const chk = window.sessionStorage.getItem("login");
+  if (chk) {
+    showNotification();
+    window.sessionStorage.removeItem("login");
+  }
+};
+
+const renderData = async (data) => {
+  await Access_token();
 
   const main = document.querySelector("main");
   const sortdata = data.sort((a, b) => a.atime - b.atime);
@@ -222,6 +224,20 @@ const renderData = async (data) => {
   }
 };
 
+async function fetchList() {
+  const res = await fetch("/items");
+
+  if (res.status === 403) {
+    alert("You need to login");
+    window.localStorage.removeItem("token");
+    window.location.pathname = "login.html";
+    return;
+  }
+
+  const data = await res.json();
+  renderData(data);
+}
+
 async function likehandlechange(like, l) {
   const item_id = l.className.split(" ")[1];
   const like_cnt = document.querySelector(`.main_box-like-cnt${item_id}`);
@@ -257,23 +273,23 @@ const Headeruser = async () => {
   URL.revokeObjectURL(url);
 };
 
-async function fetchList() {
-  const res = await fetch("/items");
-  console.log(res);
-
-  if (res.status === 403) {
-    alert("You need to login");
-    window.localStorage.removeItem("token");
-    window.location.pathname = "login.html";
-    return;
+const Movepage = async () => {
+  if (window.location.pathname === "/") {
+    const home = document.querySelector(".footer-box[data-idx='1']");
+    home.style.cssText =
+      "-webkit-filter: brightness(0) invert(1); filter: brightness(0) invert(1);";
   }
+};
 
-  const data = await res.json();
-  renderData(data);
-}
+const Rendering = async () => {
+  await fetchList();
+  await chklogin();
+  await Headeruser();
 
-fetchList();
+  setTimeout(likehandle, 500);
+};
+
+Rendering();
+Movepage();
 addtime();
 setInterval(addtime, 1000);
-setTimeout(likehandle, 500);
-setTimeout(Headeruser, 500);

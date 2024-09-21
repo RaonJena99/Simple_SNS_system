@@ -70,3 +70,7 @@
   align-items: center;
   width: 150px;
 }
+
+a {
+  text-decoration-line: none;
+}
